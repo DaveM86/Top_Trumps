@@ -39,7 +39,7 @@ Types Include:
 
 init - needs to be included in intitial message to server to initialilase player in the game
 
-move - to indicate when player makes a move, the value of the this type should be attribute "attractivness"
+move - to indicate when player makes a move, the value of the this type should be an attribute e.g. "attractivness"
 
 ### Running
 
