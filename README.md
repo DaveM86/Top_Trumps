@@ -7,6 +7,9 @@ I've removed most of the game play code while we get the messaging sorted, hopin
 I've left the client.js file in there if you want to use it as a starting point. Totally open to adding diffrent messaging "types" or changing the structure
 as you think we need.
 
+At the moment both the "hand" and "card" values are python lists that contain dictionaries that have been cast to a string to send in the message, if this is a odd
+structure to work with in react then I'll change it in back end. 
+
 #### Requirements
 
 The only python requirement is "websockets"..... pip install websockets 
