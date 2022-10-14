@@ -1,3 +1,7 @@
+'''
+Top Trumps Project websocket server.
+'''
+
 import asyncio
 import websockets
 import random
