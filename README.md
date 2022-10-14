@@ -1,7 +1,7 @@
 # Top Trumps
 Top Trumps Project
 
-### Notes for Paul
+### Project Notes
 
 I've removed most of the game play code while we get the messaging sorted, hoping this should be enough to start with.
 I've left the client.js file in there if you want to use it as a tarting point. Totally open to adding diffrent messaging "types" or changing the structure
