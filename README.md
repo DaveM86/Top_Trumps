@@ -9,7 +9,7 @@ as you think we need.
 
 #### Requirements
 
-The only python requirement if "websockets"..... pip install websockets 
+The only python requirement is "websockets"..... pip install websockets 
 
 ### Messages
 
