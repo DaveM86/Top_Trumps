@@ -45,4 +45,4 @@ move - to indicate when player makes a move, the value of the this type should b
 
 ### Running
 
-Run the websocket_server.py file from a terminal and open the app.html
+Run the websocket_server.py file from a terminal and open the app.html in two browers.
