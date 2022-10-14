@@ -11,8 +11,6 @@ as you think we need.
 
 The only python requirement if "websockets"..... pip install websockets 
 
-or just run the .venv vitrual environment.
-
 ### Messages
 
 All message between the server and the client should be json in the form
