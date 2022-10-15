@@ -1,3 +1,5 @@
+let player;
+
 function initPlayer(websocket) {
   websocket.addEventListener("open", () => {
     // Send an "init" event according to who is connecting.
@@ -15,6 +17,7 @@ function receiveMessages(websocket) {
     switch (event.type) {
       case "connect":
         document.querySelector(".connect").textContent = event.value;
+        player = event.value;
         break;
       case "info":
         document.querySelector(".info").textContent = event.value;
@@ -31,10 +34,17 @@ function receiveMessages(websocket) {
   });
 }
 
+function sendMove(websocket) {
+  document.querySelector(".plus").addEventListener("click", () => {
+    websocket.send(JSON.stringify({ "type": "move", "player": player, "attr": "atter1" }));
+  });
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   // Open the WebSocket connection and register event handlers.
   const websocket = new WebSocket("ws://localhost:8001/");
   initPlayer(websocket);
   receiveMessages(websocket);
+  sendMove(websocket);
 });
 
