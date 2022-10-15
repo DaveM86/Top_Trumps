@@ -1,133 +1,104 @@
 import asyncio
 import websockets
-import random
 import json
+from game import Game
 
-player1 = set()
-player2 = set()
+# Place holder for variable assigned to an instance of class Game()
+game = []
+
+# Global websockets groups
+player1_set = set()
+player2_set = set()
 broadcast_group = set()
-player1_hand = []
-player2_hand = []
-player1_current_card = []
-player2_current_card = []
-draw_card_store = []
 
+async def send_message(websocket, type, value):
+    try:
+        for websocket in websocket:
+            await websocket.send(json.dumps({"type": type, "value": value}))  
+    except TypeError:
+        await websocket.send(json.dumps({"type": type, "value": value}))
 
-async def replay(websocket):
+async def dist_game_state():
+    await send_message(player1_set, "hand", str(game.player1_hand))
+    await send_message(player1_set, "card", str(game.player1_current_card))
 
-    for player in player2:
-        await player.send(json.dumps({"type": "hand", "value": str(player2_hand)}))
-        await player.send(json.dumps({"type": "card", "value": str(player2_current_card)}))
-    
-    await play(websocket)
+    await send_message(player2_set, "hand", str(game.player2_hand))
+    await send_message(player2_set, "card", str(game.player2_current_card))
+
+async def replay(player2):
+
+    await send_message(player2, "hand", str(game.player2_hand))
+    await send_message(player2, "card", str(game.draw_player2_card()))
+   
+    await play(player2)
 
 async def play(websocket):
 
     async for message in websocket:
         event = json.loads(message)
+        # Need to iterate cycle through the players here maybe with itertools
         if event["player"] == "player1":
-            print(message)
             
-            if player1_current_card[0]["attr"][event["attr"]] > player2_current_card[0]["attr"][event["attr"]]:
-                for player in broadcast_group:
-                    await player.send(json.dumps({"type": "info", "value": "Player1 has won that round"}))
-                player1_hand.append(player1_current_card.pop())
-                player1_hand.append(player2_current_card.pop())
-                for x in range(len(draw_card_store)):
-                    player1_hand.append(draw_card_store.pop())
-            elif player1_current_card[0]["attr"][event["attr"]] < player2_current_card[0]["attr"][event["attr"]]:
-                for player in broadcast_group:
-                    await player.send(json.dumps({"type": "info", "value": "Player2 has won that round"}))
-                player2_hand.append(player1_current_card.pop())
-                player2_hand.append(player2_current_card.pop())
-                for x in range(len(draw_card_store)):
-                    player2_hand.append(draw_card_store.pop())
-            else:
-                for player in broadcast_group:
-                    await player.send(json.dumps({"type": "info", "value": "Round was a draw"}))
-                draw_card_store.append(player1_current_card.pop())
-                draw_card_store.append(player2_current_card.pop())
+            outcome = game.play_hand(event["attr"])
+            
+            await send_message(broadcast_group, "info", outcome)
 
-            if len(player1_hand) != 0 and len(player2_hand) != 0:            
-                player1_current_card.append(player1_hand.pop(0))
-                player2_current_card.append(player2_hand.pop(0))
+            if len(game.player1_hand) != 0 and len(game.player2_hand) != 0:            
+                game.draw_player1_card()
+                game.draw_player2_card()
 
-                for player in player1:
-                    await player.send(json.dumps({"type": "hand", "value": str(player1_hand)}))
-                    await player.send(json.dumps({"type": "card", "value": str(player1_current_card)}))
+                await dist_game_state()
 
-                for player in player2:
-                    await player.send(json.dumps({"type": "hand", "value": str(player2_hand)}))
-                    await player.send(json.dumps({"type": "card", "value": str(player2_current_card)}))
-            elif len(player2_hand) == 0:
-                for player in broadcast_group:
-                    await player.send(json.dumps({"type": "info", "value": "Player1 has won the game"}))
-                for player in player1:
-                    await player.send(json.dumps({"type": "hand", "value": str(player1_hand)}))
-                    await player.send(json.dumps({"type": "card", "value": str(player1_current_card)}))
-
-                for player in player2:
-                    await player.send(json.dumps({"type": "hand", "value": str(player2_hand)}))
-                    await player.send(json.dumps({"type": "card", "value": str(player2_current_card)}))
+            elif len(game.player2_hand) == 0:
+                await send_message(broadcast_group, "info", "Player1 has won the game")
+                await dist_game_state()
                 break
+            
             else:
-                for player in broadcast_group:
-                    await player.send(json.dumps({"type": "info", "value": "Player2 has won the game"}))
-                for player in player1:
-                    await player.send(json.dumps({"type": "hand", "value": str(player1_hand)}))
-                    await player.send(json.dumps({"type": "card", "value": str(player1_current_card)}))
-
-                for player in player2:
-                    await player.send(json.dumps({"type": "hand", "value": str(player2_hand)}))
-                    await player.send(json.dumps({"type": "card", "value": str(player2_current_card)}))
+                await send_message(broadcast_group, "info", "Player2 has won the game")
+                await dist_game_state()
                 break
 
-            
+async def game_setup(player1):
 
-async def game_setup(player):
+    global game
 
-    player1.add(player)
-    broadcast_group.add(player)
-
-    for player in player1:
-        await player.send(json.dumps({"type": "connect", "value": "player1"}))
-        await player.send(json.dumps({"type": "info", "value": "Player1 has joined the game"}))
-    
-    pack = [
+    # Place holder for csv file or db query.
+    deck = [
         [{'name':'paul', 'attr': {'atter1':7, 'atter2': 7}}],
         [{'name':'ryan', 'attr': {'atter1':4, 'atter2': 10}}],
         [{'name':'jack', 'attr': {'atter1':5, 'atter2': 8}}],
         [{'name':'david', 'attr': {'atter1':6, 'atter2': 5}}],
         ]
 
-    player_hands = [player1_hand, player2_hand]
-    random.shuffle(pack)
-
-    while len(pack) != 0:
-        for player_hand in player_hands:
-            if len(pack) == 0:
-                break
-            else:
-                player_hand += pack.pop()
+    game = Game(deck)
     
-    player1_current_card.append(player1_hand.pop(0))
-    player2_current_card.append(player2_hand.pop(0))
+    game.deal()
 
-    for player in player1:
-        await player.send(json.dumps({"type": "hand", "value": str(player1_hand)}))
-        await player.send(json.dumps({"type": "card", "value": str(player1_current_card)}))
+    await send_message(player1, "hand", str(game.player1_hand))
+    await send_message(player1, "card", str(game.draw_player1_card()))
 
-    await play(player)
+    await play(player1)
     
-async def add_player2(player):
-    player2.add(player)
-    broadcast_group.add(player)
-
-    for player in player2:
-        await player.send(json.dumps({"type": "connect", "value": "player2"}))
-        await player.send(json.dumps({"type": "info", "value": "Player2 has joined the game"}))
+async def add_player1(player1):
     
-    await replay(player)
+    player1_set.add(player1)
+    broadcast_group.add(player1)
+
+    await send_message(player1, "connect", "player1")
+    await send_message(player1, "info", "Player1 has joined the game")
+
+    await game_setup(player1)
+    
+async def add_player2(player2):
+    
+    player2_set.add(player2)
+    broadcast_group.add(player2)
+
+    await send_message(player2, "connect", "player2")
+    await send_message(player2, "info", "Player2 has joined the game")
+    
+    await replay(player2)
 
 async def handler(websocket, path):
 
@@ -135,10 +106,10 @@ async def handler(websocket, path):
     event = json.loads(message)
     assert event["type"] == "init"
 
-    if len(player1) == 0:
-        await game_setup(websocket)
+    if len(player1_set) == 0:
+        await add_player1(websocket)
     
-    elif len(player2) == 0:
+    elif len(player2_set) == 0:
         await add_player2(websocket)
 
 async def main():

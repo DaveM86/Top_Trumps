@@ -9,8 +9,6 @@ function initPlayer(websocket) {
   });
 }
 
-
-
 function receiveMessages(websocket) {
   websocket.addEventListener("message", ({ data }) => {
     const event = JSON.parse(data);
