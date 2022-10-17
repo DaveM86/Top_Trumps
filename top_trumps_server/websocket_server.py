@@ -101,7 +101,6 @@ async def add_player2(player2):
     await replay(player2)
 
 async def handler(websocket, path):
-
     message = await websocket.recv()
     event = json.loads(message)
     assert event["type"] == "init"
@@ -111,6 +110,9 @@ async def handler(websocket, path):
     
     elif len(player2_set) == 0:
         await add_player2(websocket)
+    
+    else:
+        await send_message(websocket, "info", "Sorry, the deck is in use at the moment please come back later.")
 
 async def main():
     async with websockets.serve(handler, "127.0.0.1", 8001):

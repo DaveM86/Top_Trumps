@@ -40,7 +40,7 @@ function sendMove(websocket) {
 
 window.addEventListener("DOMContentLoaded", () => {
   // Open the WebSocket connection and register event handlers.
-  const websocket = new WebSocket("ws://localhost:8001/");
+  const websocket = new WebSocket("ws://127.0.0.1:8001/");
   initPlayer(websocket);
   receiveMessages(websocket);
   sendMove(websocket);
