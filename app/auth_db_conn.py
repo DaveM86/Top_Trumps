@@ -3,13 +3,13 @@ from abc import ABC
 
 class IDBConnection(ABC):
     def __init__(self):
-        self.conn = sqlite3.connect('users.db')
+        self.conn = sqlite3.connect('auth_users.db')
         self.cur = self.conn.cursor()
 
 class DBConnectionSelect(IDBConnection):
     def fetchone(self, username: str) -> tuple:
-        # self.cur.execute("SELECT * FROM users WHERE username = ?;",(username,))
-        self.cur.execute("SELECT * FROM users;")
+        self.cur.execute("SELECT * FROM users WHERE username = ?;",(username,))
+        # self.cur.execute("SELECT * FROM users;")
         user_details = self.cur.fetchone()
         self.conn.commit()
         self.conn.close()

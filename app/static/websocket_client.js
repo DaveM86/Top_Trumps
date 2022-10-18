@@ -9,6 +9,10 @@ function initPlayer(websocket) {
   });
 }
 
+function redirect(url) {
+  location.replace(url)
+}
+
 function receiveMessages(websocket) {
   websocket.addEventListener("message", ({ data }) => {
     const event = JSON.parse(data);
@@ -25,6 +29,9 @@ function receiveMessages(websocket) {
           break;
         case "card":
           document.querySelector(".card").textContent = event.value;
+          break;
+        case "redirect":
+          redirect(event.value);
           break;
       default:
         console.error("unsupported event", event);
