@@ -34,7 +34,7 @@ async def disconnect_seq():
             await send_message(
                     broadcast_group,
                     "info",
-                    f"Your opponent has left the game and you are going to be disconnected in {num} seconds."
+                    f"You are going to be disconnected in {num} seconds."
                     )
             await asyncio.sleep(2)      
 
@@ -65,10 +65,6 @@ async def replay(player2):
 
 async def play(websocket):
     # The main game loop for toptrumps.
-
-    turn = ["player1", "player2"]
-    last_played = "player1"
-
     try:
 
         async for message in websocket:
@@ -79,10 +75,8 @@ async def play(websocket):
             event = json.loads(message)
             
             # Need to iterate cycle through the players here maybe with itertools.
-            turn_hold = turn.pop(0)
-            turn.append(turn_hold)
-
-            if event["type"] == "move" and event["player"] == turn[0] and last_played == turn[1]:
+           
+            if event["type"] == "move" and event["player"] == game.next_player[0]:
                 
                 outcome = game.play_hand(event["attr"])
 
@@ -92,8 +86,8 @@ async def play(websocket):
                 if len(game.player1_hand) != 0 and len(game.player2_hand) != 0:            
                     game.draw_player1_card()
                     game.draw_player2_card()
-                    last_played = turn[0]
-
+                    game.turn()
+                    
                     await distribute_game_state()
 
                 elif len(game.player2_hand) == 0:
@@ -146,18 +140,20 @@ async def play(websocket):
         # Call the disconnection sequence.
         await disconnect_seq()
 
-
-
 async def game_setup(player1):
 
     global game
 
     # Place holder for csv file or db query.
     deck = [
-        [{'name':'paul', 'attr': {'atter1':7, 'atter2': 7}}],
-        [{'name':'ryan', 'attr': {'atter1':4, 'atter2': 10}}],
-        [{'name':'jack', 'attr': {'atter1':5, 'atter2': 8}}],
-        [{'name':'david', 'attr': {'atter1':6, 'atter2': 5}}],
+        [{'name':'Paul', 'attr': {'atter1':7, 'atter2': 7}}],
+        [{'name':'Ryan', 'attr': {'atter1':4, 'atter2': 10}}],
+        [{'name':'Jack', 'attr': {'atter1':5, 'atter2': 8}}],
+        [{'name':'David', 'attr': {'atter1':6, 'atter2': 5}}],
+        [{'name':'kath', 'attr': {'atter1':7, 'atter2': 7}}],
+        [{'name':'Bruce', 'attr': {'atter1':4, 'atter2': 10}}],
+        [{'name':'Matt', 'attr': {'atter1':5, 'atter2': 8}}],
+        [{'name':'Joe', 'attr': {'atter1':6, 'atter2': 5}}],
         ]
 
     game = Game(deck)

@@ -8,7 +8,12 @@ class Game():
         self.player1_current_card = []
         self.player2_current_card = []
         self.draw_card_store = []
+        self.current_player = ["player1"]
+        self.next_player = ["player2"]
 
+    def turn(self):
+        self.current_player.append(self.next_player.pop(0))
+        self.next_player.append(self.current_player.pop(0))
     
     def deal(self):
         player_hands = [self.player1_hand, self.player2_hand]
