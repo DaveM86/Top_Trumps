@@ -58,6 +58,6 @@ There is a guest account set up for the login:
 
 To add additional users, open a terminal within the app folder:
 
-sqlite3 auth_users.db
+    >>> sqlite3 auth_users.db
 
-INSERT INTO users("username", "pin") VALUES("required_username", "required_pin");
+    >>> INSERT INTO users("username", "pin") VALUES("required_username", "required_pin");
