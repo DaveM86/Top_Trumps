@@ -1,3 +1,7 @@
+'''
+Class to modify the behaviour of the players toptrumps hand throughout the game.
+'''
+
 import random
 
 class Game():
@@ -12,10 +16,12 @@ class Game():
         self.next_player = ["player2"]
 
     def turn(self):
+        # Rotate the players between current player and next player.
         self.current_player.append(self.next_player.pop(0))
         self.next_player.append(self.current_player.pop(0))
     
     def deal(self):
+        # Shuffle and deal the pack between the two players.
         player_hands = [self.player1_hand, self.player2_hand]
         random.shuffle(self.deck)
         while len(self.deck) != 0:
@@ -26,15 +32,17 @@ class Game():
                     player_hand += self.deck.pop()
     
     def draw_player1_card(self):
+        # Draw next card Player1
         self.player1_current_card.append(self.player1_hand.pop(0))
         return self.player1_current_card
 
     def draw_player2_card(self):
+        # Draw next card Player2
         self.player2_current_card.append(self.player2_hand.pop(0))
         return self.player2_current_card
     
     def play_hand(self, attribute):
-        
+        # Compare the players card on selected attributes and detrmin outcome of game.
         if self.player1_current_card[0]["attr"][attribute] > self.player2_current_card[0]["attr"][attribute]:
 
             self.player1_hand.append(self.player1_current_card.pop())
