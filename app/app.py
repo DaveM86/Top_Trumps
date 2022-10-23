@@ -9,7 +9,7 @@ app = Flask(__name__)
 @app.get("/login")
 def get_login():
     # Change the url back to login.html after testing.
-    return render_template("toptrumps.html")
+    return render_template("login.html")
 
 @app.post("/toptrumps")
 def post_login():
