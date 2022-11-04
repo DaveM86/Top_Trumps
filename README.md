@@ -31,7 +31,7 @@ hand - dictionary of all cards in players hand
 
 card - dictionary of players current card
 
-chat - broadcasts chats bewtween the websocket clients
+chat - broadcasts chats between the websocket clients
 
 redirect - supplies a url to redirect the websocket to on disconnect.
   

@@ -29,7 +29,8 @@ class Game():
                 if len(self.deck) == 0:
                     break
                 else:
-                    player_hand += self.deck.pop()
+                    player_hand.append(self.deck[-1])
+                    self.deck.pop()
     
     def draw_player1_card(self):
         # Draw next card Player1
@@ -43,7 +44,7 @@ class Game():
     
     def play_hand(self, attribute):
         # Compare the players card on selected attributes and detrmin outcome of game.
-        if self.player1_current_card[0]["attr"][attribute] > self.player2_current_card[0]["attr"][attribute]:
+        if self.player1_current_card[0][attribute] > self.player2_current_card[0][attribute]:
 
             self.player1_hand.append(self.player1_current_card.pop())
             self.player1_hand.append(self.player2_current_card.pop())
@@ -52,7 +53,7 @@ class Game():
             
             return "Player 1 has won that round"
        
-        elif self.player1_current_card[0]["attr"][attribute] < self.player2_current_card[0]["attr"][attribute]:
+        elif self.player1_current_card[0][attribute] < self.player2_current_card[0][attribute]:
 
             self.player2_hand.append(self.player1_current_card.pop())
             self.player2_hand.append(self.player2_current_card.pop())

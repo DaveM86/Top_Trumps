@@ -41,7 +41,7 @@ function receiveMessages(websocket) {
 
 function sendMove(websocket) {
   document.querySelector(".plus").addEventListener("click", () => {
-    websocket.send(JSON.stringify({ "type": "move", "player": player, "attr": "atter1" }));
+    websocket.send(JSON.stringify({ "type": "move", "player": player, "attr": "perceived technical knowledge" }));
   });
 }
 

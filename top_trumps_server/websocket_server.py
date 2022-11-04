@@ -4,6 +4,7 @@ import json
 from game import Game
 from logger import info_logger
 from state_checker import inplay_idle_check
+import pandas as pd
 
 # Place holder for variable assigned to an instance of class Game().
 game = []
@@ -166,23 +167,17 @@ async def play(websocket):
         # Call the disconnection sequence.
         await disconnect_seq()
 
+def create_deck():
+    
+    df = pd.read_csv("cards.csv")
+    deck = df.to_dict('records')
+    return(deck)
 
 async def game_setup(player1):
 
     global game
 
-    # Place holder for csv file or db query.
-    deck = [
-        [{"name": "Paul", "attr": {"atter1": 7, "atter2": 7}}],
-        [{"name": "Ryan", "attr": {"atter1": 4, "atter2": 10}}],
-        [{"name": "Jack", "attr": {"atter1": 5, "atter2": 8}}],
-        [{"name": "David", "attr": {"atter1": 6, "atter2": 5}}],
-        [{"name": "kath", "attr": {"atter1": 7, "atter2": 7}}],
-        [{"name": "Bruce", "attr": {"atter1": 4, "atter2": 10}}],
-        [{"name": "Matt", "attr": {"atter1": 5, "atter2": 8}}],
-        [{"name": "Joe", "attr": {"atter1": 6, "atter2": 5}}],
-    ]
-
+    deck = create_deck()
     game = Game(deck)
 
     game.deal()
